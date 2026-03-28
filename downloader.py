@@ -1,34 +1,38 @@
 import os
-import subprocess
 import requests
 import random
 
 def setup_folders():
-    # Folder structure ensure karna
     folders = ['gameplay', 'music', 'memes', 'assets']
     for f in folders:
         if not os.path.exists(f):
             os.makedirs(f)
 
-def download_youtube_assets():
-    # 🎮 Fresh Gameplay Links
-    gameplay_links = [
-        "https://youtu.be/74voi0vlxHE",
-        "https://youtu.be/VS3D8bgYhf4",
-        "https://youtu.be/z121mUPexGc"
+def download_open_assets():
+    # 🏎️ 1. Gameplay/Background Video (Pexels se)
+    # Maine ye 3 best vertical drifting/gameplay clips ke direct links nikaale hain
+    video_links = [
+        "https://www.pexels.com/video/854671/download/", # Car Drift
+        "https://www.pexels.com/video/5752458/download/", # Aesthetic City
+        "https://www.pexels.com/video/3041933/download/"  # Highway Drive
     ]
     
-    # 🎵 Music Link
-    music_url = "https://youtu.be/MbOk39AytPs"
+    print("📥 Downloading Background Video from Pexels...")
+    v_url = random.choice(video_links)
+    v_data = requests.get(v_url, stream=True)
+    with open('gameplay/bg_gameplay.mp4', 'wb') as f:
+        for chunk in v_data.iter_content(chunk_size=1024*1024):
+            if chunk: f.write(chunk)
+    print("✅ Video Ready!")
 
-    # FORCE DOWNLOAD (Checking files explicitly)
-    print("📥 Downloading Gameplay...")
-    url = random.choice(gameplay_links)
-    # -f 'bestvideo[height<=480]' speed ke liye (GitHub Actions ke liye kaafi hai)
-    subprocess.run(['yt-dlp', '-f', 'bestvideo[height<=480]', '--no-playlist', '-o', 'gameplay/bg_gameplay.mp4', url])
-    
+    # 🎵 2. Music (Pixabay/Direct MP3)
+    # Ye ek trending aesthetic music ka direct link hai
+    music_url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
     print("📥 Downloading Music...")
-    subprocess.run(['yt-dlp', '-x', '--audio-format', 'mp3', '--no-playlist', '-o', 'music/bg_music.mp3', music_url])
+    m_data = requests.get(music_url)
+    with open('music/bg_music.mp3', 'wb') as f:
+        f.write(m_data.content)
+    print("✅ Music Ready!")
 
 def get_memes_from_imgflip():
     print("🤖 Fetching Trending Memes...")
@@ -48,7 +52,7 @@ def get_memes_from_imgflip():
 
 if __name__ == "__main__":
     setup_folders()
-    download_youtube_assets()
+    download_open_assets()
     get_memes_from_imgflip()
-    print("🚀 All Assets Ready!")
+    print("🚀 All Assets Ready for Video Making!")
     
