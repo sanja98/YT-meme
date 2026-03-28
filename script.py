@@ -22,8 +22,11 @@ def make_meme_video():
     video_clip = video_clip.crop(x_center=video_clip.w/2, width=1080, height=1920)
 
     # 3. Meme Overlay (Center mein chipkana)
-    meme_img = mp.ImageClip(random_meme).set_duration(10).resize(width=900)
+    meme_img = mp.ImageClip(random_meme).set_duration(10)
     # Center mein position karna
+    if meme_img.w > 900:
+    meme_img = meme_img.resize(width=900)
+
     meme_clip = meme_img.set_position(("center", "center"))
 
     # 4. Music add karna
