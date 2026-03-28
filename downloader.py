@@ -9,24 +9,25 @@ def setup_folders():
             os.makedirs(f)
 
 def download_open_assets():
-    # 🏎️ 1. Gameplay/Background Video (Pexels se)
-    # Maine ye 3 best vertical drifting/gameplay clips ke direct links nikaale hain
+    # 🏎️ 1. Direct Video Links (No Redirects)
+    # Ye Pixabay ke direct CDN links hain jo seedha mp4 download karte hain
     video_links = [
-        "https://www.pexels.com/video/854671/download/", # Car Drift
-        "https://www.pexels.com/video/5752458/download/", # Aesthetic City
-        "https://www.pexels.com/video/3041933/download/"  # Highway Drive
+        "https://cdn.pixabay.com/video/2021/04/12/70796-536130421_tiny.mp4", # Car drifting
+        "https://cdn.pixabay.com/video/2023/10/22/186050-877312154_tiny.mp4", # City Drive
+        "https://cdn.pixabay.com/video/2020/09/11/49607-458392186_tiny.mp4"  # Highway
     ]
     
-    print("📥 Downloading Background Video from Pexels...")
+    print("📥 Downloading Background Video...")
     v_url = random.choice(video_links)
-    v_data = requests.get(v_url, stream=True)
-    with open('gameplay/bg_gameplay.mp4', 'wb') as f:
-        for chunk in v_data.iter_content(chunk_size=1024*1024):
-            if chunk: f.write(chunk)
-    print("✅ Video Ready!")
+    # Stream=True taaki badi file sahi se download ho
+    with requests.get(v_url, stream=True) as r:
+        r.raise_for_status()
+        with open('gameplay/bg_gameplay.mp4', 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+    print("✅ Video File Saved!")
 
-    # 🎵 2. Music (Pixabay/Direct MP3)
-    # Ye ek trending aesthetic music ka direct link hai
+    # 🎵 2. Music (Direct MP3)
     music_url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
     print("📥 Downloading Music...")
     m_data = requests.get(music_url)
