@@ -1,15 +1,15 @@
 name: Meme-Auto-Pilot
 
 on:
-  workflow_dispatch: # Manual button ke liye
+  workflow_dispatch:
   schedule:
-    - cron: '0 6,15 * * *' # Din mein 2 baar (IST: 11:30 AM & 8:30 PM)
+    - cron: '0 6,15 * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -22,16 +22,18 @@ jobs:
           sudo apt-get update && sudo apt-get install -y ffmpeg
           pip install yt-dlp moviepy==1.0.3 requests Pillow
 
+      # Step 1: Download everything
       - name: Download Resources
         run: python downloader.py
 
+      # Step 2: Create the video (Ye missing tha shayad)
       - name: Create Video
         run: python script.py
 
-      # Yahan aap apna YouTube Upload wala logic ya Telegram bot notification daal sakte ho
-      - name: Upload Artifact
+      # Step 3: Save result so you can see it
+      - name: Upload Video Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: final-video
+          name: final-meme-video
           path: final_meme_short.mp4
           
