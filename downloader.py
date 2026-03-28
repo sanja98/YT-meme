@@ -9,37 +9,46 @@ def setup_folders():
             os.makedirs(f)
 
 def download_open_assets():
-    # 🏎️ 1. Direct Video Links (No Redirects)
-    # Ye Pixabay ke direct CDN links hain jo seedha mp4 download karte hain
+    # 🏎️ 1. Direct Video Links (High Speed & Permanent)
+    # Ye samples hamesha available rehte hain testing aur automation ke liye
     video_links = [
-        "https://cdn.pixabay.com/video/2021/04/12/70796-536130421_tiny.mp4", # Car drifting
-        "https://cdn.pixabay.com/video/2023/10/22/186050-877312154_tiny.mp4", # City Drive
-        "https://cdn.pixabay.com/video/2020/09/11/49607-458392186_tiny.mp4"  # Highway
+        "https://v.redd.it/3041933/DASH_480.mp4", 
+        "https://www.w3schools.com/html/mov_bbb.mp4", # Backup link
+        "https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/car-detection.mp4"
     ]
     
     print("📥 Downloading Background Video...")
-    v_url = random.choice(video_links)
-    # Stream=True taaki badi file sahi se download ho
-    with requests.get(v_url, stream=True) as r:
+    try:
+        v_url = random.choice(video_links)
+        r = requests.get(v_url, stream=True, timeout=30)
         r.raise_for_status()
         with open('gameplay/bg_gameplay.mp4', 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
-    print("✅ Video File Saved!")
+        print("✅ Video File Saved!")
+    except:
+        # Emergency Backup: Agar upar wale fail hue toh ye pakka chalega
+        print("⚠️ Primary links failed, using emergency backup...")
+        os.system("curl -L -o gameplay/bg_gameplay.mp4 'https://github.com/intel-iot-devkit/sample-videos/raw/master/bottle-detection.mp4'")
 
-    # 🎵 2. Music (Direct MP3)
+    # 🎵 2. Music (Stable Link)
     music_url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
     print("📥 Downloading Music...")
-    m_data = requests.get(music_url)
-    with open('music/bg_music.mp3', 'wb') as f:
-        f.write(m_data.content)
-    print("✅ Music Ready!")
+    try:
+        m_data = requests.get(music_url, timeout=20)
+        with open('music/bg_music.mp3', 'wb') as f:
+            f.write(m_data.content)
+        print("✅ Music Ready!")
+    except:
+        print("⚠️ Music download failed, creating silent audio...")
+        # Agar music fail hua toh 10 sec ka silent file bana dega script crash hone se bachane ke liye
+        os.system("ffmpeg -f lavfi -i anullsrc=r=44100:cl=stereo -t 10 -q:a 9 -acodec libmp3lame music/bg_music.mp3")
 
 def get_memes_from_imgflip():
     print("🤖 Fetching Trending Memes...")
     try:
         url = "https://api.imgflip.com/get_memes"
-        response = requests.get(url).json()
+        response = requests.get(url, timeout=15).json()
         if response['success']:
             memes = response['data']['memes']
             selected_memes = random.sample(memes, 10)
@@ -55,5 +64,5 @@ if __name__ == "__main__":
     setup_folders()
     download_open_assets()
     get_memes_from_imgflip()
-    print("🚀 All Assets Ready for Video Making!")
+    print("🚀 All Assets Ready!")
     
