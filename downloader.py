@@ -2,31 +2,31 @@ import os
 import subprocess
 
 def download_assets():
-    # Folder structure setup
+    # Zaruri folders check karna
     folders = ['gameplay', 'sigma_clips', 'music', 'assets']
     for f in folders:
         if not os.path.exists(f): os.makedirs(f)
 
-    # 📝 Working Links ki List (Updated)
+    # Aapke diye hue fresh links
     links = [
-        "https://youtu.be/z121mUPexGc?si=OE1N5iiCZvOWTSqZ", # Fresh Minecraft Parkour
-        "https://youtu.be/VS3D8bgYhf4?si=VoEbZ8u79rjBsC0S", # Subway Surfers
-        "https://youtu.be/74voi0vlxHE?si=pJouMlxcBq33VsOd"  # GTA V Ramp
+        "https://youtu.be/74voi0vlxHE",
+        "https://youtu.be/VS3D8bgYhf4",
+        "https://youtu.be/z121mUPexGc"
     ]
 
+    # Gameplay download logic
     if not os.listdir('gameplay'):
         for url in links:
-            print(f"📥 Trying to download: {url}")
-            # --no-playlist isliye taaki poori list download na hone lage
+            print(f"📥 Downloading from: {url}")
+            # yt-dlp GitHub ke internet se download karega
             res = subprocess.run(['yt-dlp', '-f', 'bestvideo[height<=720]', '--no-playlist', '-o', 'gameplay/bg_gameplay.mp4', url])
             if res.returncode == 0:
-                print("✅ Gameplay Downloaded!")
+                print("✅ Gameplay ready!")
                 break
     
-    # 🏎️ Sigma Clips (Pexels - Always Working)
+    # Sigma clip backup (Pexels se automatic)
     if not os.listdir('sigma_clips'):
-        print("📥 Downloading Sigma Clip from Pexels API...")
-        # Ye direct high-quality drifting car video ka link hai
+        print("📥 Fetching Sigma template...")
         os.system("curl -L -o sigma_clips/sigma1.mp4 'https://www.pexels.com/video/854671/download/'")
 
 if __name__ == "__main__":
